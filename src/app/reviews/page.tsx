@@ -33,13 +33,13 @@ export default function ReviewsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest'>('newest');
-  
+
   const [formData, setFormData] = useState({
     movieTitle: "",
     moviePoster: "",
     userName: "",
     rating: "8",
-    reviewText: "",
+    reviewText: ""
   });
 
   const [stats, setStats] = useState<Stats>({
@@ -58,9 +58,9 @@ export default function ReviewsPage() {
       const total = reviews.length;
       const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / total;
       const distribution: Record<number, number> = {};
-      
+
       for (let i = 1; i <= 10; i++) {
-        distribution[i] = reviews.filter(r => r.rating === i).length;
+        distribution[i] = reviews.filter((r) => r.rating === i).length;
       }
 
       setStats({ total, avgRating, distribution });
@@ -74,16 +74,16 @@ export default function ReviewsPage() {
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
-        r => 
-          r.movieTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          r.reviewText?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          r.userName.toLowerCase().includes(searchQuery.toLowerCase())
+        (r) =>
+        r.movieTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.reviewText?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.userName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Rating filter
     if (filterRating !== null) {
-      filtered = filtered.filter(r => r.rating === filterRating);
+      filtered = filtered.filter((r) => r.rating === filterRating);
     }
 
     // Sort
@@ -131,8 +131,8 @@ export default function ReviewsPage() {
           moviePoster: formData.moviePoster || null,
           userName: formData.userName,
           rating: parseInt(formData.rating),
-          reviewText: formData.reviewText || null,
-        }),
+          reviewText: formData.reviewText || null
+        })
       });
 
       if (response.ok) {
@@ -141,7 +141,7 @@ export default function ReviewsPage() {
           moviePoster: "",
           userName: "",
           rating: "8",
-          reviewText: "",
+          reviewText: ""
         });
         fetchReviews();
       }
@@ -162,7 +162,7 @@ export default function ReviewsPage() {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -174,7 +174,7 @@ export default function ReviewsPage() {
 
   const getDistributionPercentage = (count: number) => {
     if (stats.total === 0) return 0;
-    return Math.round((count / stats.total) * 100);
+    return Math.round(count / stats.total * 100);
   };
 
   return (
@@ -243,8 +243,8 @@ export default function ReviewsPage() {
             </div>
 
             {/* Stats Dashboard */}
-            {!loading && reviews.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            {!loading && reviews.length > 0 &&
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div className="bg-card/50 border border-border/50 rounded-lg p-4">
                   <div className="text-2xl font-bold text-primary">{stats.total}</div>
                   <div className="text-xs text-muted-foreground">Total Reviews</div>
@@ -261,44 +261,44 @@ export default function ReviewsPage() {
                 </div>
                 <div className="bg-card/50 border border-border/50 rounded-lg p-4">
                   <div className="text-2xl font-bold text-accent">
-                    {Object.values(stats.distribution).filter(v => v > 0).length}
+                    {Object.values(stats.distribution).filter((v) => v > 0).length}
                   </div>
                   <div className="text-xs text-muted-foreground">Rating Diversity</div>
                 </div>
               </div>
-            )}
+            }
 
             {/* Rating Distribution */}
-            {!loading && reviews.length > 0 && (
-              <div className="mt-6 bg-card/50 border border-border/50 rounded-xl p-6">
+            {!loading && reviews.length > 0 &&
+            <div className="mt-6 bg-card/50 border border-border/50 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart3 className="w-5 h-5 text-primary" />
                   <h3 className="text-lg font-semibold">Rating Distribution</h3>
                 </div>
                 <div className="space-y-2">
                   {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((rating) => {
-                    const count = stats.distribution[rating] || 0;
-                    const percentage = getDistributionPercentage(count);
-                    return (
-                      <div key={rating} className="flex items-center gap-3">
+                  const count = stats.distribution[rating] || 0;
+                  const percentage = getDistributionPercentage(count);
+                  return (
+                    <div key={rating} className="flex items-center gap-3">
                         <div className="w-8 text-sm font-medium text-muted-foreground">
                           {rating}★
                         </div>
                         <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                            style={{ width: `${percentage}%` }}
-                          />
+                          className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
+                          style={{ width: `${percentage}%` }} />
+
                         </div>
                         <div className="w-16 text-sm text-muted-foreground text-right">
                           {count} ({percentage}%)
                         </div>
-                      </div>
-                    );
-                  })}
+                      </div>);
+
+                })}
                 </div>
               </div>
-            )}
+            }
           </div>
         </section>
 
@@ -315,8 +315,8 @@ export default function ReviewsPage() {
                       placeholder="Search reviews, movies, or users..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-background border-border/50"
-                    />
+                      className="pl-10 bg-background border-border/50" />
+
                   </div>
                 </div>
 
@@ -326,12 +326,12 @@ export default function ReviewsPage() {
                   <select
                     value={filterRating || ''}
                     onChange={(e) => setFilterRating(e.target.value ? parseInt(e.target.value) : null)}
-                    className="px-3 py-2 bg-background border border-border/50 rounded-lg text-sm"
-                  >
+                    className="px-3 py-2 bg-background border border-border/50 rounded-lg text-sm">
+
                     <option value="">All Ratings</option>
-                    {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((r) => (
-                      <option key={r} value={r}>{r}★ ({stats.distribution[r] || 0})</option>
-                    ))}
+                    {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((r) =>
+                    <option key={r} value={r}>{r}★ ({stats.distribution[r] || 0})</option>
+                    )}
                   </select>
                 </div>
 
@@ -341,8 +341,8 @@ export default function ReviewsPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="px-3 py-2 bg-background border border-border/50 rounded-lg text-sm"
-                  >
+                    className="px-3 py-2 bg-background border border-border/50 rounded-lg text-sm">
+
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
                     <option value="highest">Highest Rated</option>
@@ -352,38 +352,38 @@ export default function ReviewsPage() {
               </div>
 
               {/* Active Filters */}
-              {(searchQuery || filterRating) && (
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
+              {(searchQuery || filterRating) &&
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
                   <span className="text-sm text-muted-foreground">Active filters:</span>
-                  {searchQuery && (
-                    <Badge variant="secondary" className="gap-1">
+                  {searchQuery &&
+                <Badge variant="secondary" className="gap-1">
                       Search: "{searchQuery}"
                       <button onClick={() => setSearchQuery("")} className="ml-1 hover:text-destructive">
                         ×
                       </button>
                     </Badge>
-                  )}
-                  {filterRating && (
-                    <Badge variant="secondary" className="gap-1">
+                }
+                  {filterRating &&
+                <Badge variant="secondary" className="gap-1">
                       Rating: {filterRating}★
                       <button onClick={() => setFilterRating(null)} className="ml-1 hover:text-destructive">
                         ×
                       </button>
                     </Badge>
-                  )}
+                }
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setFilterRating(null);
-                    }}
-                    className="ml-auto text-xs"
-                  >
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFilterRating(null);
+                  }}
+                  className="ml-auto text-xs">
+
                     Clear All
                   </Button>
                 </div>
-              )}
+              }
             </div>
           </div>
         </section>
@@ -411,11 +411,11 @@ export default function ReviewsPage() {
                         placeholder="John Doe"
                         value={formData.userName}
                         onChange={(e) =>
-                          setFormData({ ...formData, userName: e.target.value })
+                        setFormData({ ...formData, userName: e.target.value })
                         }
                         required
-                        className="bg-background border-border/50"
-                      />
+                        className="bg-background border-border/50 md:!text-slate-400" />
+
                     </div>
 
                     <div className="space-y-2">
@@ -424,11 +424,11 @@ export default function ReviewsPage() {
                         placeholder="The Matrix"
                         value={formData.movieTitle}
                         onChange={(e) =>
-                          setFormData({ ...formData, movieTitle: e.target.value })
+                        setFormData({ ...formData, movieTitle: e.target.value })
                         }
                         required
-                        className="bg-background border-border/50"
-                      />
+                        className="bg-background border-border/50 md:!text-slate-400" />
+
                     </div>
 
                     <div className="space-y-2">
@@ -439,10 +439,10 @@ export default function ReviewsPage() {
                         placeholder="/path/to/poster.jpg"
                         value={formData.moviePoster}
                         onChange={(e) =>
-                          setFormData({ ...formData, moviePoster: e.target.value })
+                        setFormData({ ...formData, moviePoster: e.target.value })
                         }
-                        className="bg-background border-border/50"
-                      />
+                        className="bg-background border-border/50" />
+
                       <p className="text-xs text-muted-foreground">
                         TMDB poster path or full URL
                       </p>
@@ -458,21 +458,21 @@ export default function ReviewsPage() {
                         max="10"
                         value={formData.rating}
                         onChange={(e) =>
-                          setFormData({ ...formData, rating: e.target.value })
+                        setFormData({ ...formData, rating: e.target.value })
                         }
-                        className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-                      />
+                        className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
+
                       <div className="flex items-center gap-1">
-                        {Array.from({ length: 10 }).map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`w-4 h-4 ${
-                              i < parseInt(formData.rating) 
-                                ? 'fill-primary text-primary' 
-                                : 'text-muted-foreground/30'
-                            }`} 
-                          />
-                        ))}
+                        {Array.from({ length: 10 }).map((_, i) =>
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                          i < parseInt(formData.rating) ?
+                          'fill-primary text-primary' :
+                          'text-muted-foreground/30'}`
+                          } />
+
+                        )}
                       </div>
                     </div>
 
@@ -484,11 +484,11 @@ export default function ReviewsPage() {
                         placeholder="Share your thoughts about this movie... What did you love? What could be better?"
                         value={formData.reviewText}
                         onChange={(e) =>
-                          setFormData({ ...formData, reviewText: e.target.value })
+                        setFormData({ ...formData, reviewText: e.target.value })
                         }
                         rows={5}
-                        className="bg-background border-border/50 resize-none"
-                      />
+                        className="bg-background border-border/50 resize-none" />
+
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>{formData.reviewText.length} characters</span>
                         <span>{formData.reviewText.length > 500 ? '✓ Detailed' : 'Keep writing...'}</span>
@@ -498,19 +498,19 @@ export default function ReviewsPage() {
                     <Button
                       type="submit"
                       disabled={submitting}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                    >
-                      {submitting ? (
-                        <>
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+
+                      {submitting ?
+                      <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                           Submitting...
-                        </>
-                      ) : (
-                        <>
+                        </> :
+
+                      <>
                           <Send className="w-4 h-4 mr-2" />
                           Submit Review
                         </>
-                      )}
+                      }
                     </Button>
                   </form>
                 </div>
@@ -520,51 +520,51 @@ export default function ReviewsPage() {
             {/* Reviews List */}
             <div className="lg:col-span-2 space-y-6">
               {/* Results Count */}
-              {!loading && reviews.length > 0 && (
-                <div className="flex items-center justify-between">
+              {!loading && reviews.length > 0 &&
+              <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     Showing {filteredReviews.length} of {reviews.length} reviews
                   </p>
-                  {filteredReviews.length === 0 && reviews.length > 0 && (
-                    <Badge variant="secondary">No matches found</Badge>
-                  )}
+                  {filteredReviews.length === 0 && reviews.length > 0 &&
+                <Badge variant="secondary">No matches found</Badge>
+                }
                 </div>
-              )}
+              }
 
-              {loading ? (
-                <div className="flex items-center justify-center py-20">
+              {loading ?
+              <div className="flex items-center justify-center py-20">
                   <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                </div>
-              ) : filteredReviews.length === 0 && reviews.length === 0 ? (
-                <div className="text-center py-20">
+                </div> :
+              filteredReviews.length === 0 && reviews.length === 0 ?
+              <div className="text-center py-20">
                   <Film className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                   <p className="text-xl text-muted-foreground mb-2">No reviews yet</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Be the first to share your movie experience!
                   </p>
-                </div>
-              ) : filteredReviews.length === 0 ? (
-                <div className="text-center py-20">
+                </div> :
+              filteredReviews.length === 0 ?
+              <div className="text-center py-20">
                   <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                   <p className="text-xl text-muted-foreground mb-2">No matching reviews</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Try adjusting your filters or search terms
                   </p>
-                </div>
-              ) : (
-                filteredReviews.map((review) => (
-                  <div
-                    key={review.id}
-                    className="bg-card border border-border/50 rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group"
-                  >
+                </div> :
+
+              filteredReviews.map((review) =>
+              <div
+                key={review.id}
+                className="bg-card border border-border/50 rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group">
+
                     <div className="flex gap-4">
                       {/* Movie Poster */}
                       <div className="flex-shrink-0">
                         <img
-                          src={getImageUrl(review.moviePoster)}
-                          alt={review.movieTitle}
-                          className="w-24 h-36 object-cover rounded-lg border border-border/50 group-hover:border-primary/30 transition-colors"
-                        />
+                      src={getImageUrl(review.moviePoster)}
+                      alt={review.movieTitle}
+                      className="w-24 h-36 object-cover rounded-lg border border-border/50 group-hover:border-primary/30 transition-colors" />
+
                       </div>
 
                       {/* Review Content */}
@@ -589,48 +589,48 @@ export default function ReviewsPage() {
                         {/* Rating */}
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-1">
-                            {Array.from({ length: 10 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < review.rating
-                                    ? 'fill-primary text-primary'
-                                    : 'text-muted-foreground/30'
-                                }`}
-                              />
-                            ))}
+                            {Array.from({ length: 10 }).map((_, i) =>
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                          i < review.rating ?
+                          'fill-primary text-primary' :
+                          'text-muted-foreground/30'}`
+                          } />
+
+                        )}
                           </div>
-                          <Badge 
-                            variant="secondary" 
-                            className={`${getRatingColor(review.rating)} font-bold`}
-                          >
+                          <Badge
+                        variant="secondary"
+                        className={`${getRatingColor(review.rating)} font-bold`}>
+
                             {review.rating}/10
                           </Badge>
                         </div>
 
                         {/* Review Text */}
-                        {review.reviewText && (
-                          <p className="text-muted-foreground leading-relaxed">
+                        {review.reviewText &&
+                    <p className="text-muted-foreground leading-relaxed">
                             {review.reviewText}
                           </p>
-                        )}
+                    }
 
                         {/* Review Meta */}
                         <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                           <Badge variant="outline" className="text-xs">
                             {review.reviewText ? `${review.reviewText.length} chars` : 'No text'}
                           </Badge>
-                          {review.rating >= 8 && (
-                            <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
+                          {review.rating >= 8 &&
+                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
                               Highly Recommended
                             </Badge>
-                          )}
+                      }
                         </div>
                       </div>
                     </div>
                   </div>
-                ))
-              )}
+              )
+              }
             </div>
           </div>
         </div>
@@ -642,6 +642,6 @@ export default function ReviewsPage() {
           </div>
         </footer>
       </div>
-    </div>
-  );
+    </div>);
+
 }
