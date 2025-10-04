@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Film, Sparkles, Loader2 } from "lucide-react";
+import { Film, Sparkles, Loader2, MessageSquare } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import FilterButtons from "@/components/FilterButtons";
 import MovieDetailsDialog from "@/components/MovieDetailsDialog";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Genre {
   id: number;
@@ -103,6 +105,41 @@ export default function Home() {
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
       
       <div className="relative">
+        {/* Navigation */}
+        <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                <Film className="w-6 h-6 text-primary" />
+                <span className="bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+                  MovieHub
+                </span>
+              </Link>
+              
+              <div className="flex items-center gap-3">
+                <Link href="/">
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                    <Film className="w-4 h-4" />
+                    Browse
+                  </Button>
+                </Link>
+                <Link href="/reviews">
+                  <Button variant="ghost" className="gap-2">
+                    <MessageSquare className="w-4 h-4" />
+                    Reviews
+                  </Button>
+                </Link>
+                <Link href="/recommendations">
+                  <Button variant="ghost" className="gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    AI Recommendations
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+
         {/* Hero Section */}
         <section className="pt-20 pb-16 px-6">
           <div className="max-w-7xl mx-auto text-center space-y-8">
