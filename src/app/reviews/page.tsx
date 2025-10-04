@@ -397,7 +397,7 @@ export default function ReviewsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Award className="w-5 h-5 text-primary" />
-                      <h2 className="text-2xl font-semibold">Add Review</h2>
+                      <h2 className="text-2xl font-semibold !text-slate-600">Add Review</h2>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Share your movie experience with the community
@@ -406,7 +406,7 @@ export default function ReviewsPage() {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-400">Your Name</label>
+                      <label className="text-sm font-medium !text-slate-500">Your Name</label>
                       <Input
                         placeholder="John Doe"
                         value={formData.userName}
