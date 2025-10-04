@@ -449,7 +449,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-600">
+                      <label className="text-sm font-medium !text-slate-500">
                         Rating: {formData.rating}/10
                       </label>
                       <input
@@ -477,7 +477,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-sm font-medium !text-slate-500">
                         Review <span className="text-muted-foreground font-normal">(Optional)</span>
                       </label>
                       <Textarea
