@@ -47,11 +47,11 @@ export default function RecommendationsPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  
+
   const [preferences, setPreferences] = useState({
     likedMovies: "",
     genres: "",
-    searchHistory: "",
+    searchHistory: ""
   });
 
   const [stats, setStats] = useState({
@@ -84,7 +84,7 @@ export default function RecommendationsPage() {
       setFilteredRecommendations(allRecommendations);
     } else {
       setFilteredRecommendations(
-        allRecommendations.filter(m => m.recommendation_type === selectedFilter)
+        allRecommendations.filter((m) => m.recommendation_type === selectedFilter)
       );
     }
   }, [selectedFilter, allRecommendations]);
@@ -100,7 +100,7 @@ export default function RecommendationsPage() {
 
       const response = await fetch(`/api/recommendations?${params.toString()}`);
       const data: RecommendationsResponse = await response.json();
-      
+
       setAllRecommendations(data.recommendations || []);
       setFilteredRecommendations(data.recommendations || []);
       setStats({
@@ -135,14 +135,14 @@ export default function RecommendationsPage() {
   };
 
   const filterOptions = [
-    { id: 'all', label: 'All Recommendations', icon: Sparkles, count: allRecommendations.length },
-    { id: 'similar', label: 'Similar to Liked', icon: Users, count: allRecommendations.filter(m => m.recommendation_type === 'similar').length },
-    { id: 'genre', label: 'Genre Matches', icon: Film, count: allRecommendations.filter(m => m.recommendation_type === 'genre').length },
-    { id: 'director', label: 'Same Directors', icon: Award, count: allRecommendations.filter(m => m.recommendation_type === 'director').length },
-    { id: 'hidden-gem', label: 'Hidden Gems', icon: Lightbulb, count: allRecommendations.filter(m => m.recommendation_type === 'hidden-gem').length },
-    { id: 'trending', label: 'Trending', icon: TrendingUp, count: allRecommendations.filter(m => m.recommendation_type === 'trending').length },
-    { id: 'diverse', label: 'Explore New', icon: Zap, count: allRecommendations.filter(m => m.recommendation_type === 'diverse').length },
-  ].filter(f => f.count > 0 || f.id === 'all');
+  { id: 'all', label: 'All Recommendations', icon: Sparkles, count: allRecommendations.length },
+  { id: 'similar', label: 'Similar to Liked', icon: Users, count: allRecommendations.filter((m) => m.recommendation_type === 'similar').length },
+  { id: 'genre', label: 'Genre Matches', icon: Film, count: allRecommendations.filter((m) => m.recommendation_type === 'genre').length },
+  { id: 'director', label: 'Same Directors', icon: Award, count: allRecommendations.filter((m) => m.recommendation_type === 'director').length },
+  { id: 'hidden-gem', label: 'Hidden Gems', icon: Lightbulb, count: allRecommendations.filter((m) => m.recommendation_type === 'hidden-gem').length },
+  { id: 'trending', label: 'Trending', icon: TrendingUp, count: allRecommendations.filter((m) => m.recommendation_type === 'trending').length },
+  { id: 'diverse', label: 'Explore New', icon: Zap, count: allRecommendations.filter((m) => m.recommendation_type === 'diverse').length }].
+  filter((f) => f.count > 0 || f.id === 'all');
 
   const strategyLabels: Record<string, string> = {
     "collaborative-filtering": "Similar Movies",
@@ -152,7 +152,7 @@ export default function RecommendationsPage() {
     "trending-boost": "Trending",
     "semantic-search-matching": "Search Patterns",
     "diversity-injection": "Diversity",
-    "multi-factor-ml-ranking": "ML Ranking",
+    "multi-factor-ml-ranking": "ML Ranking"
   };
 
   return (
@@ -211,19 +211,19 @@ export default function RecommendationsPage() {
                   </span>
                 </h1>
                 <p className="text-muted-foreground text-sm mt-1">
-                  {stats.algorithm && (
-                    <span className="inline-flex items-center gap-1.5">
+                  {stats.algorithm &&
+                  <span className="inline-flex items-center gap-1.5">
                       <Zap className="w-3 h-3" />
                       Powered by {stats.algorithm}
                     </span>
-                  )}
+                  }
                 </p>
               </div>
             </div>
 
             {/* Stats Bar */}
-            {!loading && allRecommendations.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            {!loading && allRecommendations.length > 0 &&
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div className="bg-card/50 border border-border/50 rounded-lg p-4">
                   <div className="text-2xl font-bold text-primary">{allRecommendations.length}</div>
                   <div className="text-xs text-muted-foreground">Movies Found</div>
@@ -241,26 +241,26 @@ export default function RecommendationsPage() {
                   <div className="text-xs text-muted-foreground">Recommendation Types</div>
                 </div>
               </div>
-            )}
+            }
 
             {/* AI Strategies Used */}
-            {stats.strategiesUsed.length > 0 && (
-              <div className="mt-6">
+            {stats.strategiesUsed.length > 0 &&
+            <div className="mt-6">
                 <p className="text-xs text-muted-foreground mb-2">Active AI Strategies:</p>
                 <div className="flex flex-wrap gap-2">
-                  {stats.strategiesUsed.map((strategy) => (
-                    <Badge
-                      key={strategy}
-                      variant="secondary"
-                      className="bg-primary/10 text-primary border-primary/20 text-xs"
-                    >
+                  {stats.strategiesUsed.map((strategy) =>
+                <Badge
+                  key={strategy}
+                  variant="secondary"
+                  className="bg-primary/10 text-primary border-primary/20 text-xs">
+
                       <Sparkles className="w-3 h-3 mr-1" />
                       {strategyLabels[strategy] || strategy}
                     </Badge>
-                  ))}
+                )}
                 </div>
               </div>
-            )}
+            }
           </div>
         </section>
 
@@ -271,35 +271,35 @@ export default function RecommendationsPage() {
               <Button
                 onClick={() => setShowPreferences(!showPreferences)}
                 variant="outline"
-                className="border-border/50"
-              >
+                className="border-border/50">
+
                 <Settings className="w-4 h-4 mr-2" />
                 {showPreferences ? "Hide" : "Customize"}
               </Button>
               <Button
                 onClick={loadRecommendations}
                 disabled={loading}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                {loading ? (
-                  <>
+                className="bg-primary hover:bg-primary/90 text-primary-foreground">
+
+                {loading ?
+                <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Analyzing...
-                  </>
-                ) : (
-                  <>
+                  </> :
+
+                <>
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Refresh
                   </>
-                )}
+                }
               </Button>
             </div>
           </div>
         </section>
 
         {/* Preferences Panel */}
-        {showPreferences && (
-          <section className="pb-8 px-6">
+        {showPreferences &&
+        <section className="pb-8 px-6">
             <div className="max-w-7xl mx-auto">
               <div className="bg-card border border-border/50 rounded-xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
@@ -317,13 +317,13 @@ export default function RecommendationsPage() {
                       <span className="text-muted-foreground font-normal ml-1">(comma-separated)</span>
                     </label>
                     <Input
-                      placeholder="e.g., 27205,155,157336"
-                      value={preferences.likedMovies}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, likedMovies: e.target.value })
-                      }
-                      className="bg-background border-border/50"
-                    />
+                    placeholder="e.g., 27205,155,157336"
+                    value={preferences.likedMovies}
+                    onChange={(e) =>
+                    setPreferences({ ...preferences, likedMovies: e.target.value })
+                    }
+                    className="bg-background border-border/50" />
+
                     <p className="text-xs text-muted-foreground">
                       Try: 27205 (Inception), 155 (Dark Knight), 19995 (Avatar)
                     </p>
@@ -335,13 +335,13 @@ export default function RecommendationsPage() {
                       <span className="text-muted-foreground font-normal ml-1">(comma-separated)</span>
                     </label>
                     <Input
-                      placeholder="e.g., 28,12,878"
-                      value={preferences.genres}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, genres: e.target.value })
-                      }
-                      className="bg-background border-border/50"
-                    />
+                    placeholder="e.g., 28,12,878"
+                    value={preferences.genres}
+                    onChange={(e) =>
+                    setPreferences({ ...preferences, genres: e.target.value })
+                    }
+                    className="bg-background border-border/50 md:!text-slate-400" />
+
                     <p className="text-xs text-muted-foreground">
                       Try: 28 (Action), 878 (Sci-Fi), 12 (Adventure)
                     </p>
@@ -353,13 +353,13 @@ export default function RecommendationsPage() {
                       <span className="text-muted-foreground font-normal ml-1">(keywords)</span>
                     </label>
                     <Input
-                      placeholder="e.g., space,adventure,thriller"
-                      value={preferences.searchHistory}
-                      onChange={(e) =>
-                        setPreferences({ ...preferences, searchHistory: e.target.value })
-                      }
-                      className="bg-background border-border/50"
-                    />
+                    placeholder="e.g., space,adventure,thriller"
+                    value={preferences.searchHistory}
+                    onChange={(e) =>
+                    setPreferences({ ...preferences, searchHistory: e.target.value })
+                    }
+                    className="bg-background border-border/50 md:!text-slate-400" />
+
                     <p className="text-xs text-muted-foreground">
                       Keywords that interest you
                     </p>
@@ -368,9 +368,9 @@ export default function RecommendationsPage() {
 
                 <div className="flex justify-end">
                   <Button
-                    onClick={loadRecommendations}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
+                  onClick={loadRecommendations}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground">
+
                     <Sparkles className="w-4 h-4 mr-2" />
                     Generate Recommendations
                   </Button>
@@ -378,113 +378,113 @@ export default function RecommendationsPage() {
               </div>
             </div>
           </section>
-        )}
+        }
 
         {/* Filter Tabs */}
-        {!loading && allRecommendations.length > 0 && (
-          <section className="pb-8 px-6">
+        {!loading && allRecommendations.length > 0 &&
+        <section className="pb-8 px-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {filterOptions.map((option) => {
-                  const Icon = option.icon;
-                  const isActive = selectedFilter === option.id;
-                  
-                  return (
-                    <Button
-                      key={option.id}
-                      onClick={() => setSelectedFilter(option.id)}
-                      variant={isActive ? "default" : "outline"}
-                      size="sm"
-                      className={`flex-shrink-0 gap-2 ${
-                        isActive
-                          ? "bg-primary text-primary-foreground"
-                          : "border-border/50 hover:border-primary/50"
-                      }`}
-                    >
+                const Icon = option.icon;
+                const isActive = selectedFilter === option.id;
+
+                return (
+                  <Button
+                    key={option.id}
+                    onClick={() => setSelectedFilter(option.id)}
+                    variant={isActive ? "default" : "outline"}
+                    size="sm"
+                    className={`flex-shrink-0 gap-2 ${
+                    isActive ?
+                    "bg-primary text-primary-foreground" :
+                    "border-border/50 hover:border-primary/50"}`
+                    }>
+
                       <Icon className="w-4 h-4" />
                       {option.label}
                       <Badge
-                        variant="secondary"
-                        className={`ml-1 ${
-                          isActive
-                            ? "bg-primary-foreground/20 text-primary-foreground"
-                            : "bg-muted"
-                        }`}
-                      >
+                      variant="secondary"
+                      className={`ml-1 ${
+                      isActive ?
+                      "bg-primary-foreground/20 text-primary-foreground" :
+                      "bg-muted"}`
+                      }>
+
                         {option.count}
                       </Badge>
-                    </Button>
-                  );
-                })}
+                    </Button>);
+
+              })}
               </div>
             </div>
           </section>
-        )}
+        }
 
         {/* Movie Grid */}
         <section className="pb-20 px-6">
           <div className="max-w-7xl mx-auto">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-4">
+            {loading ?
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <Loader2 className="w-12 h-12 animate-spin text-primary" />
                 <p className="text-muted-foreground">Analyzing your preferences with AI...</p>
-              </div>
-            ) : filteredRecommendations.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredRecommendations.map((movie) => (
-                  <div key={movie.id} className="group relative">
+              </div> :
+            filteredRecommendations.length > 0 ?
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredRecommendations.map((movie) =>
+              <div key={movie.id} className="group relative">
                     <MovieCard
-                      movieId={movie.id}
-                      title={movie.title}
-                      year={movie.release_date ? new Date(movie.release_date).getFullYear() : 0}
-                      rating={Number(movie.vote_average.toFixed(1))}
-                      genre={getGenreName(movie.genre_ids)}
-                      image={getImageUrl(movie.poster_path)}
-                      description={movie.overview}
-                      onClick={() => handleMovieClick(movie.id)}
-                    />
+                  movieId={movie.id}
+                  title={movie.title}
+                  year={movie.release_date ? new Date(movie.release_date).getFullYear() : 0}
+                  rating={Number(movie.vote_average.toFixed(1))}
+                  genre={getGenreName(movie.genre_ids)}
+                  image={getImageUrl(movie.poster_path)}
+                  description={movie.overview}
+                  onClick={() => handleMovieClick(movie.id)} />
+
                     
                     {/* Enhanced Info Overlay */}
                     <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-2 pointer-events-none z-10">
                       <Badge
-                        variant="secondary"
-                        className="bg-primary/90 text-primary-foreground backdrop-blur-sm text-xs"
-                      >
+                    variant="secondary"
+                    className="bg-primary/90 text-primary-foreground backdrop-blur-sm text-xs">
+
                         {movie.match_score}% Match
                       </Badge>
                       <Badge
-                        variant="secondary"
-                        className="bg-accent/90 text-accent-foreground backdrop-blur-sm text-xs"
-                      >
+                    variant="secondary"
+                    className="bg-accent/90 text-accent-foreground backdrop-blur-sm text-xs">
+
                         {movie.confidence}% Sure
                       </Badge>
                     </div>
                     
                     {/* Reasons Tooltip on Hover */}
-                    {movie.reasons.length > 0 && (
-                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    {movie.reasons.length > 0 &&
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                         <div className="space-y-1">
-                          {movie.reasons.slice(0, 2).map((reason, idx) => (
-                            <div key={idx} className="flex items-start gap-1.5 text-xs text-white">
+                          {movie.reasons.slice(0, 2).map((reason, idx) =>
+                    <div key={idx} className="flex items-start gap-1.5 text-xs text-white">
                               <ChevronRight className="w-3 h-3 flex-shrink-0 mt-0.5" />
                               <span className="line-clamp-1">{reason}</span>
                             </div>
-                          ))}
+                    )}
                         </div>
                       </div>
-                    )}
+                }
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
+              )}
+              </div> :
+
+            <div className="text-center py-20">
                 <Sparkles className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                 <p className="text-xl text-muted-foreground mb-2">No recommendations yet</p>
                 <p className="text-sm text-muted-foreground">
                   Customize your preferences to get AI-powered suggestions
                 </p>
               </div>
-            )}
+            }
           </div>
         </section>
 
@@ -500,8 +500,8 @@ export default function RecommendationsPage() {
       <MovieDetailsDialog
         movieId={selectedMovieId}
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
-    </div>
-  );
+        onOpenChange={setDialogOpen} />
+
+    </div>);
+
 }
