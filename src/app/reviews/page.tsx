@@ -419,7 +419,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-400">Movie Title</label>
+                      <label className="text-sm font-medium !text-slate-500">Movie Title</label>
                       <Input
                         placeholder="The Matrix"
                         value={formData.movieTitle}
