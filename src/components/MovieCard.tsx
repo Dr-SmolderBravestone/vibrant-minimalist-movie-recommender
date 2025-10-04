@@ -5,21 +5,25 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface MovieCardProps {
+  movieId: number;
   title: string;
   year: number;
   rating: number;
   genre: string;
   image: string;
   description: string;
+  onClick?: () => void;
 }
 
 export default function MovieCard({
+  movieId,
   title,
   year,
   rating,
   genre,
   image,
   description,
+  onClick,
 }: MovieCardProps) {
   return (
     <motion.div
@@ -27,6 +31,7 @@ export default function MovieCard({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ duration: 0.3 }}
+      onClick={onClick}
       className="group relative bg-card rounded-xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 cursor-pointer"
     >
       {/* Image Container */}

@@ -5,6 +5,7 @@ import { Film, Sparkles, Loader2 } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import FilterButtons from "@/components/FilterButtons";
+import MovieDetailsDialog from "@/components/MovieDetailsDialog";
 
 interface Genre {
   id: number;
@@ -28,6 +29,8 @@ export default function Home() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalMovies, setTotalMovies] = useState(0);
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Fetch genres on mount
   useEffect(() => {
@@ -72,6 +75,11 @@ export default function Home() {
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, selectedGenre]);
+
+  const handleMovieClick = (movieId: number) => {
+    setSelectedMovieId(movieId);
+    setDialogOpen(true);
+  };
 
   const getGenreName = (genreIds: number[]) => {
     if (!genreIds.length || !genres.length) return "Movie";
@@ -189,12 +197,14 @@ export default function Home() {
                 {movies.map((movie) => (
                   <MovieCard
                     key={movie.id}
+                    movieId={movie.id}
                     title={movie.title}
                     year={movie.release_date ? new Date(movie.release_date).getFullYear() : 0}
                     rating={Number(movie.vote_average.toFixed(1))}
                     genre={getGenreName(movie.genre_ids)}
                     image={getImageUrl(movie.poster_path)}
                     description={movie.overview}
+                    onClick={() => handleMovieClick(movie.id)}
                   />
                 ))}
               </div>
@@ -214,6 +224,13 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      {/* Movie Details Dialog */}
+      <MovieDetailsDialog
+        movieId={selectedMovieId}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </div>
   );
 }
