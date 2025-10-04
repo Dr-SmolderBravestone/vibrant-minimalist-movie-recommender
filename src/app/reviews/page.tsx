@@ -432,7 +432,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-400">
+                      <label className="text-sm font-medium !text-slate-500">
                         Poster Path <span className="text-muted-foreground font-normal">(Optional)</span>
                       </label>
                       <Input
@@ -449,7 +449,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-sm font-medium !text-slate-600">
                         Rating: {formData.rating}/10
                       </label>
                       <input
