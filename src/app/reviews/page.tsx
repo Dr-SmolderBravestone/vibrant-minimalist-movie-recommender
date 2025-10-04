@@ -419,7 +419,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Movie Title</label>
+                      <label className="text-sm font-medium !text-slate-400">Movie Title</label>
                       <Input
                         placeholder="The Matrix"
                         value={formData.movieTitle}
@@ -432,7 +432,7 @@ export default function ReviewsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-sm font-medium !text-slate-400">
                         Poster Path <span className="text-muted-foreground font-normal">(Optional)</span>
                       </label>
                       <Input
