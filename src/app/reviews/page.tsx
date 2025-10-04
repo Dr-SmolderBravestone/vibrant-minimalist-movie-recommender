@@ -406,7 +406,7 @@ export default function ReviewsPage() {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Your Name</label>
+                      <label className="text-sm font-medium !text-slate-400">Your Name</label>
                       <Input
                         placeholder="John Doe"
                         value={formData.userName}
@@ -441,7 +441,7 @@ export default function ReviewsPage() {
                         onChange={(e) =>
                         setFormData({ ...formData, moviePoster: e.target.value })
                         }
-                        className="bg-background border-border/50" />
+                        className="bg-background border-border/50 md:!text-slate-400" />
 
                       <p className="text-xs text-muted-foreground">
                         TMDB poster path or full URL
