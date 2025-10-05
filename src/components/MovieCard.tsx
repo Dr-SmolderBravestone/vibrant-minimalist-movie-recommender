@@ -1,8 +1,12 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Star, Heart, Bookmark, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface MovieCardProps {
   movieId: number;
@@ -25,6 +29,99 @@ export default function MovieCard({
   description,
   onClick,
 }: MovieCardProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const [watchLaterLoading, setWatchLaterLoading] = useState(false);
+
+  const handleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!session?.user) {
+      toast.error("Please login to add favorites");
+      router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("bearer_token");
+
+    try {
+      const response = await fetch("/api/favorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          movieId,
+          movieTitle: title,
+          moviePoster: image.includes('tmdb') ? image.split('w500')[1] : null
+        })
+      });
+
+      if (response.ok) {
+        toast.success("Added to favorites ❤️");
+      } else {
+        const error = await response.json();
+        if (error.code === "DUPLICATE_FAVORITE") {
+          toast.info("Already in favorites");
+        } else {
+          toast.error(error.error || "Failed to add to favorites");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      toast.error("An error occurred");
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
+  const handleWatchLater = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!session?.user) {
+      toast.error("Please login to add to watch later");
+      router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    setWatchLaterLoading(true);
+    const token = localStorage.getItem("bearer_token");
+
+    try {
+      const response = await fetch("/api/watch-later", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          movieId,
+          movieTitle: title,
+          moviePoster: image.includes('tmdb') ? image.split('w500')[1] : null
+        })
+      });
+
+      if (response.ok) {
+        toast.success("Added to watch later 🔖");
+      } else {
+        const error = await response.json();
+        if (error.code === "DUPLICATE_MOVIE") {
+          toast.info("Already in watch later");
+        } else {
+          toast.error(error.error || "Failed to add to watch later");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding to watch later:", error);
+      toast.error("An error occurred");
+    } finally {
+      setWatchLaterLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -48,6 +145,34 @@ export default function MovieCard({
         <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
           <span className="text-sm font-semibold text-white">{rating}</span>
+        </div>
+
+        {/* Quick Action Buttons */}
+        <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={handleFavorite}
+            disabled={favoriteLoading}
+            className="p-2.5 bg-black/80 backdrop-blur-sm rounded-full hover:bg-red-500 hover:scale-110 transition-all duration-200 disabled:opacity-50"
+            title="Add to Favorites"
+          >
+            <Heart className="w-4 h-4 text-white" />
+          </button>
+          <button
+            onClick={handleWatchLater}
+            disabled={watchLaterLoading}
+            className="p-2.5 bg-black/80 backdrop-blur-sm rounded-full hover:bg-accent hover:scale-110 transition-all duration-200 disabled:opacity-50"
+            title="Watch Later"
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+          </button>
+        </div>
+
+        {/* Click to view details overlay */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className="bg-primary/90 backdrop-blur-sm px-6 py-3 rounded-full flex items-center gap-2">
+            <Play className="w-5 h-5 text-white" />
+            <span className="text-white font-semibold">View Details</span>
+          </div>
         </div>
       </div>
 
