@@ -2,28 +2,35 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Film, Loader2, Mail, Lock, User, Chrome } from "lucide-react";
+import { Film, Loader2, Mail, Lock, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { authClient, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 
-function RegisterForm() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isPending } = useSession();
-
+  
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    rememberMe: false
   });
 
   const redirect = searchParams.get("redirect") || "/";
+  const registered = searchParams.get("registered");
+
+  useEffect(() => {
+    if (registered === "true") {
+      toast.success("Account created! Please login with your credentials.");
+    }
+  }, [registered]);
 
   useEffect(() => {
     if (!isPending && session?.user) {
@@ -33,40 +40,26 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      toast.error("Password must be at least 8 characters long");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const { data, error } = await authClient.signUp.email({
+      const { data, error } = await authClient.signIn.email({
         email: formData.email,
-        name: formData.name,
-        password: formData.password
+        password: formData.password,
+        rememberMe: formData.rememberMe,
+        callbackURL: redirect
       });
 
       if (error?.code) {
-        const errorMap: Record<string, string> = {
-          USER_ALREADY_EXISTS: "An account with this email already exists. Please login instead."
-        };
-        toast.error(errorMap[error.code] || "Registration failed. Please try again.");
+        toast.error("Invalid email or password. Please make sure you have already registered an account and try again.");
         setLoading(false);
         return;
       }
 
-      toast.success("Account created successfully! Redirecting to login...");
-      router.push(`/login?registered=true${redirect !== "/" ? `&redirect=${encodeURIComponent(redirect)}` : ""}`);
+      toast.success("Login successful!");
+      router.push(redirect);
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Login error:", error);
       toast.error("An unexpected error occurred. Please try again.");
       setLoading(false);
     }
@@ -123,17 +116,17 @@ function RegisterForm() {
                 MovieHub
               </span>
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight mt-4 !text-blue-800 !block">Create Account</h1>
-            <p className="text-muted-foreground mt-2">Sign up to start reviewing movies</p>
+            <h1 className="text-3xl font-bold tracking-tight mt-4">Welcome Back</h1>
+            <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
           </div>
 
-          {/* Register Card */}
+          {/* Login Card */}
           <div className="bg-card border border-border/50 rounded-xl p-8 space-y-6">
             {/* Google Sign In */}
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5 !text-slate-200"
+              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
             >
@@ -153,33 +146,14 @@ function RegisterForm() {
                 <div className="w-full border-t border-border/50" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-card text-muted-foreground">Or register with email</span>
+                <span className="px-4 bg-card text-muted-foreground">Or continue with email</span>
               </div>
             </div>
 
-            {/* Registration Form */}
+            {/* Email/Password Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium !text-slate-600">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
-                    required
-                    autoComplete="name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium !text-slate-600">
+                <label htmlFor="email" className="text-sm font-medium">
                   Email
                 </label>
                 <div className="relative">
@@ -190,7 +164,7 @@ function RegisterForm() {
                     placeholder="you@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
+                    className="pl-10 bg-background border-border/50"
                     required
                     autoComplete="email"
                   />
@@ -198,7 +172,7 @@ function RegisterForm() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium !text-slate-600">
+                <label htmlFor="password" className="text-sm font-medium">
                   Password
                 </label>
                 <div className="relative">
@@ -209,31 +183,28 @@ function RegisterForm() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
+                    className="pl-10 bg-background border-border/50"
                     required
                     autoComplete="off"
-                    minLength={8}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium !text-slate-600">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
-                    required
-                    autoComplete="off"
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="remember"
+                    checked={formData.rememberMe}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, rememberMe: checked as boolean })
+                    }
                   />
+                  <label 
+                    htmlFor="remember" 
+                    className="text-sm text-muted-foreground cursor-pointer"
+                  >
+                    Remember me
+                  </label>
                 </div>
               </div>
 
@@ -245,23 +216,23 @@ function RegisterForm() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Creating account...
+                    Signing in...
                   </>
                 ) : (
-                  "Create Account"
+                  "Sign In"
                 )}
               </Button>
             </form>
 
-            {/* Sign In Link */}
+            {/* Sign Up Link */}
             <div className="text-center pt-4 border-t border-border/50">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link
-                  href={`/login${redirect !== "/" ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
+                Don't have an account?{" "}
+                <Link 
+                  href={`/register${redirect !== "/" ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign in
+                  Create account
                 </Link>
               </p>
             </div>
@@ -279,7 +250,7 @@ function RegisterForm() {
   );
 }
 
-export default function RegisterPage() {
+export default function LoginPage() {
   return (
     <Suspense
       fallback={
@@ -288,7 +259,7 @@ export default function RegisterPage() {
         </div>
       }
     >
-      <RegisterForm />
+      <LoginForm />
     </Suspense>
   );
 }
