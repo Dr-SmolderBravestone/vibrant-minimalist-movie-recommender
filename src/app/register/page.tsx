@@ -198,7 +198,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">
+                <label htmlFor="password" className="text-sm font-medium !text-slate-600">
                   Password
                 </label>
                 <div className="relative">
@@ -219,7 +219,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                <label htmlFor="confirmPassword" className="text-sm font-medium !text-slate-600">
                   Confirm Password
                 </label>
                 <div className="relative">
