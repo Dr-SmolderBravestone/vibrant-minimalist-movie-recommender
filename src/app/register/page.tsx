@@ -123,7 +123,7 @@ export default function RegisterPage() {
                 MovieHub
               </span>
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight mt-4">Create Account</h1>
+            <h1 className="text-3xl font-bold tracking-tight mt-4 !text-blue-800 !block">Create Account</h1>
             <p className="text-muted-foreground mt-2">Sign up to start reviewing movies</p>
           </div>
 
