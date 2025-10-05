@@ -133,7 +133,7 @@ export default function RegisterPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5"
+              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5 !text-slate-200"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}>
 
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
                     required
                     autoComplete="off" />
 
