@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, MessageSquare, Loader2, Send, Film, Sparkles, Search, Filter, TrendingUp, Award, Users, BarChart3, Calendar, LogIn, Share2, Facebook, Twitter } from "lucide-react";
+import { Star, MessageSquare, Loader2, Send, Film, Sparkles, Search, Filter, TrendingUp, Award, Users, BarChart3, Calendar, LogIn, Share2, Facebook, Twitter, MessageCircle, Instagram, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -185,22 +185,42 @@ export default function ReviewsPage() {
     }
   };
 
-  const handleShareReview = (review: Review, platform: 'facebook' | 'twitter') => {
+  const handleShareReview = (review: Review, platform: 'facebook' | 'twitter' | 'reddit' | 'discord' | 'instagram') => {
     const text = `Check out my ${review.rating}/10 review of "${review.movieTitle}"${review.reviewText ? `: ${review.reviewText.slice(0, 100)}...` : ''}`;
     const url = window.location.origin + '/reviews';
     
-    if (platform === 'facebook') {
-      window.open(
-        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
-        '_blank',
-        'width=600,height=400'
-      );
-    } else if (platform === 'twitter') {
-      window.open(
-        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-        '_blank',
-        'width=600,height=400'
-      );
+    switch (platform) {
+      case 'facebook':
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
+          '_blank',
+          'width=600,height=400'
+        );
+        break;
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+          '_blank',
+          'width=600,height=400'
+        );
+        break;
+      case 'reddit':
+        window.open(
+          `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
+          '_blank',
+          'width=600,height=600'
+        );
+        break;
+      case 'discord':
+        // Copy to clipboard for Discord sharing
+        navigator.clipboard.writeText(`${text}\n${url}`);
+        toast.success('Link copied! Paste it in Discord');
+        break;
+      case 'instagram':
+        // Instagram doesn't support direct sharing, copy to clipboard
+        navigator.clipboard.writeText(text);
+        toast.success('Review text copied! Share it on Instagram');
+        break;
     }
   };
 
@@ -688,13 +708,14 @@ export default function ReviewsPage() {
                       }
                           </div>
                           
-                          {/* Share Buttons */}
-                          <div className="flex items-center gap-2">
+                          {/* Enhanced Share Buttons */}
+                          <div className="flex items-center gap-1.5">
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-8 px-2 hover:bg-blue-500/10 hover:text-blue-500"
                               onClick={() => handleShareReview(review, 'facebook')}
+                              title="Share on Facebook"
                             >
                               <Facebook className="w-4 h-4" />
                             </Button>
@@ -703,8 +724,36 @@ export default function ReviewsPage() {
                               size="sm"
                               className="h-8 px-2 hover:bg-sky-500/10 hover:text-sky-500"
                               onClick={() => handleShareReview(review, 'twitter')}
+                              title="Share on X/Twitter"
                             >
                               <Twitter className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-orange-500/10 hover:text-orange-500"
+                              onClick={() => handleShareReview(review, 'reddit')}
+                              title="Share on Reddit"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-indigo-500/10 hover:text-indigo-500"
+                              onClick={() => handleShareReview(review, 'discord')}
+                              title="Share on Discord"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-pink-500/10 hover:text-pink-500"
+                              onClick={() => handleShareReview(review, 'instagram')}
+                              title="Copy for Instagram"
+                            >
+                              <Instagram className="w-4 h-4" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -714,8 +763,9 @@ export default function ReviewsPage() {
                                 navigator.clipboard.writeText(window.location.origin + '/reviews');
                                 toast.success('Link copied to clipboard!');
                               }}
+                              title="Copy Link"
                             >
-                              <Share2 className="w-4 h-4" />
+                              <Copy className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>

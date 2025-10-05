@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Star, Calendar, Clock, Users, Video, Loader2, X, Heart, Bookmark, ExternalLink, Play, Tv } from "lucide-react";
+import { Star, Calendar, Clock, Users, Video, Loader2, X, Heart, Bookmark, ExternalLink, Play, Tv, Share2, Facebook, Twitter, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -96,6 +96,7 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
       setDetails(data);
     } catch (error) {
       console.error("Error fetching movie details:", error);
+      toast.error("Failed to load movie details");
     } finally {
       setLoading(false);
     }
@@ -105,11 +106,22 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
     if (!movieId) return;
     
     try {
+      const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+      if (!apiKey) {
+        console.warn("TMDB API key not set");
+        return;
+      }
+      
       const response = await fetch(
-        `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
+        `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${apiKey}`
       );
+      
+      if (!response.ok) {
+        console.warn("Failed to fetch watch providers");
+        return;
+      }
+      
       const data = await response.json();
-      // Get US providers (you can make this dynamic based on user location)
       setWatchProviders(data.results?.US || null);
     } catch (error) {
       console.error("Error fetching watch providers:", error);
@@ -170,7 +182,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
 
     try {
       if (isFavorite) {
-        // Remove from favorites
         const response = await fetch(`/api/favorites/${movieId}`, {
           method: "DELETE",
           headers: {
@@ -185,7 +196,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
           toast.error("Failed to remove from favorites");
         }
       } else {
-        // Add to favorites
         const response = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -203,7 +213,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
           setIsFavorite(true);
           toast.success("Added to favorites");
           
-          // Check and award achievements
           if (token && session?.user?.id) {
             await checkAndAwardAchievements(session.user.id, token);
           }
@@ -234,7 +243,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
 
     try {
       if (isWatchLater) {
-        // Remove from watch later
         const response = await fetch(`/api/watch-later/${movieId}`, {
           method: "DELETE",
           headers: {
@@ -249,7 +257,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
           toast.error("Failed to remove from watch later");
         }
       } else {
-        // Add to watch later
         const response = await fetch("/api/watch-later", {
           method: "POST",
           headers: {
@@ -267,7 +274,6 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
           setIsWatchLater(true);
           toast.success("Added to watch later");
           
-          // Check and award achievements
           if (token && session?.user?.id) {
             await checkAndAwardAchievements(session.user.id, token);
           }
@@ -291,6 +297,42 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
     } else {
       const searchQuery = encodeURIComponent(`watch ${details.title} ${new Date(details.release_date).getFullYear()} online`);
       window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
+    }
+  };
+
+  const handleShareMovie = (platform: 'facebook' | 'twitter' | 'reddit' | 'discord') => {
+    if (!details) return;
+    
+    const text = `Check out "${details.title}" (${new Date(details.release_date).getFullYear()}) - ${details.vote_average.toFixed(1)}/10⭐`;
+    const url = `https://www.themoviedb.org/movie/${details.id}`;
+    
+    switch (platform) {
+      case 'facebook':
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
+          '_blank',
+          'width=600,height=400'
+        );
+        break;
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+          '_blank',
+          'width=600,height=400'
+        );
+        break;
+      case 'reddit':
+        window.open(
+          `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
+          '_blank',
+          'width=600,height=600'
+        );
+        break;
+      case 'discord':
+        // Copy to clipboard for Discord sharing
+        navigator.clipboard.writeText(`${text}\n${url}`);
+        toast.success('Link copied! Paste it in Discord');
+        break;
     }
   };
 
@@ -508,6 +550,61 @@ export default function MovieDetailsDialog({ movieId, open, onOpenChange }: Movi
                   )}
                   {isWatchLater ? "Saved" : "Watch Later"}
                 </Button>
+              </div>
+
+              {/* Social Sharing Buttons */}
+              <div className="bg-secondary/50 border border-border/50 rounded-xl p-4">
+                <p className="text-sm font-medium mb-3">Share this movie:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hover:bg-blue-500/10 hover:text-blue-500 hover:border-blue-500/50"
+                    onClick={() => handleShareMovie('facebook')}
+                  >
+                    <Facebook className="w-4 h-4 mr-2" />
+                    Facebook
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hover:bg-sky-500/10 hover:text-sky-500 hover:border-sky-500/50"
+                    onClick={() => handleShareMovie('twitter')}
+                  >
+                    <Twitter className="w-4 h-4 mr-2" />
+                    X/Twitter
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hover:bg-orange-500/10 hover:text-orange-500 hover:border-orange-500/50"
+                    onClick={() => handleShareMovie('reddit')}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Reddit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hover:bg-indigo-500/10 hover:text-indigo-500 hover:border-indigo-500/50"
+                    onClick={() => handleShareMovie('discord')}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Discord
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://www.themoviedb.org/movie/${details.id}`);
+                      toast.success('Link copied to clipboard!');
+                    }}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Copy Link
+                  </Button>
+                </div>
               </div>
 
               {/* Overview */}

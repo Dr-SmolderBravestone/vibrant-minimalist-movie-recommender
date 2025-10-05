@@ -35,6 +35,27 @@ export default function MovieCard({
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [watchLaterLoading, setWatchLaterLoading] = useState(false);
 
+  // Helper function to extract poster path from full URL
+  const getMoviePosterPath = (imageUrl: string): string | null => {
+    if (!imageUrl) return null;
+    
+    // If it's already a path (starts with /), return it
+    if (imageUrl.startsWith('/')) return imageUrl;
+    
+    // If it's a full TMDB URL, extract the path
+    if (imageUrl.includes('image.tmdb.org')) {
+      const match = imageUrl.match(/\/[^/]+\.(jpg|png)/);
+      if (match) {
+        // Extract everything from the last slash onwards (e.g., /abc123.jpg)
+        const pathMatch = imageUrl.match(/(\/.+\.(jpg|png))/);
+        return pathMatch ? pathMatch[1] : null;
+      }
+    }
+    
+    // Otherwise return null
+    return null;
+  };
+
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
@@ -57,7 +78,7 @@ export default function MovieCard({
         body: JSON.stringify({
           movieId,
           movieTitle: title,
-          moviePoster: image.includes('tmdb') ? image.split('w500')[1] : null
+          moviePoster: getMoviePosterPath(image)
         })
       });
 
@@ -106,7 +127,7 @@ export default function MovieCard({
         body: JSON.stringify({
           movieId,
           movieTitle: title,
-          moviePoster: image.includes('tmdb') ? image.split('w500')[1] : null
+          moviePoster: getMoviePosterPath(image)
         })
       });
 
