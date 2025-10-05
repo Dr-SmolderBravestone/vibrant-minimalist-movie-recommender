@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Film, Sparkles, Loader2, MessageSquare } from "lucide-react";
+import { Film, Sparkles, Loader2, MessageSquare, LogIn, UserCircle, LogOut } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import FilterButtons from "@/components/FilterButtons";
 import MovieDetailsDialog from "@/components/MovieDetailsDialog";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useSession, authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Genre {
   id: number;
@@ -25,6 +28,9 @@ interface TMDBMovie {
 }
 
 export default function Home() {
+  const { data: session, isPending: sessionLoading, refetch } = useSession();
+  const router = useRouter();
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [movies, setMovies] = useState<TMDBMovie[]>([]);
@@ -83,6 +89,18 @@ export default function Home() {
     setDialogOpen(true);
   };
 
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut();
+    if (error?.code) {
+      toast.error(error.code);
+    } else {
+      localStorage.removeItem("bearer_token");
+      refetch();
+      toast.success("Signed out successfully");
+      router.push("/");
+    }
+  };
+
   const getGenreName = (genreIds: number[]) => {
     if (!genreIds.length || !genres.length) return "Movie";
     const genre = genres.find((g) => g.id === genreIds[0]);
@@ -135,6 +153,39 @@ export default function Home() {
                     AI Recommendations
                   </Button>
                 </Link>
+                
+                {/* Auth Buttons */}
+                {sessionLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                ) : session?.user ? (
+                  <>
+                    <Link href="/profile">
+                      <Button variant="outline" className="gap-2">
+                        <UserCircle className="w-4 h-4" />
+                        {session.user.name}
+                      </Button>
+                    </Link>
+                    <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Button variant="outline" className="gap-2">
+                        <LogIn className="w-4 h-4" />
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/register">
+                      <Button className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2">
+                        <UserCircle className="w-4 h-4" />
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
