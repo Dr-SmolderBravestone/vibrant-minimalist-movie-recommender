@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { checkAndAwardAchievements } from "@/lib/achievements";
 
 interface MovieCardProps {
   movieId: number;
@@ -62,6 +63,11 @@ export default function MovieCard({
 
       if (response.ok) {
         toast.success("Added to favorites ❤️");
+        
+        // Check and award achievements
+        if (token && session?.user?.id) {
+          await checkAndAwardAchievements(session.user.id, token);
+        }
       } else {
         const error = await response.json();
         if (error.code === "DUPLICATE_FAVORITE") {
@@ -106,6 +112,11 @@ export default function MovieCard({
 
       if (response.ok) {
         toast.success("Added to watch later 🔖");
+        
+        // Check and award achievements
+        if (token && session?.user?.id) {
+          await checkAndAwardAchievements(session.user.id, token);
+        }
       } else {
         const error = await response.json();
         if (error.code === "DUPLICATE_MOVIE") {

@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, MessageSquare, Loader2, Send, Film, Sparkles, Search, Filter, TrendingUp, Award, Users, BarChart3, Calendar, ThumbsUp, Trash2, Edit } from "lucide-react";
+import { Star, MessageSquare, Loader2, Send, Film, Sparkles, Search, Filter, TrendingUp, Award, Users, BarChart3, Calendar, LogIn, Share2, Facebook, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { checkAndAwardAchievements } from "@/lib/achievements";
 
 interface Review {
   id: number;
@@ -26,6 +30,9 @@ interface Stats {
 }
 
 export default function ReviewsPage() {
+  const { data: session, isPending: sessionLoading } = useSession();
+  const router = useRouter();
+  
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +44,6 @@ export default function ReviewsPage() {
   const [formData, setFormData] = useState({
     movieTitle: "",
     moviePoster: "",
-    userName: "",
     rating: "8",
     reviewText: ""
   });
@@ -119,36 +125,82 @@ export default function ReviewsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check authentication
+    if (!session?.user) {
+      toast.error("Please login to submit a review");
+      router.push(`/login?redirect=${encodeURIComponent('/reviews')}`);
+      return;
+    }
+    
     setSubmitting(true);
 
     try {
+      const token = localStorage.getItem("bearer_token");
+      
       const response = await fetch("/api/reviews", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           movieTitle: formData.movieTitle,
           movieId: Math.floor(Math.random() * 1000000),
           moviePoster: formData.moviePoster || null,
-          userName: formData.userName,
           rating: parseInt(formData.rating),
           reviewText: formData.reviewText || null
         })
       });
 
+      if (response.status === 401) {
+        toast.error("Session expired. Please login again.");
+        router.push(`/login?redirect=${encodeURIComponent('/reviews')}`);
+        return;
+      }
+
       if (response.ok) {
+        toast.success("Review submitted successfully!");
         setFormData({
           movieTitle: "",
           moviePoster: "",
-          userName: "",
           rating: "8",
           reviewText: ""
         });
         fetchReviews();
+        
+        // Check and award achievements
+        if (token && session?.user?.id) {
+          await checkAndAwardAchievements(session.user.id, token);
+        }
+      } else {
+        const error = await response.json();
+        toast.error(error.error || "Failed to submit review");
       }
     } catch (error) {
       console.error("Error submitting review:", error);
+      toast.error("Failed to submit review");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleShareReview = (review: Review, platform: 'facebook' | 'twitter') => {
+    const text = `Check out my ${review.rating}/10 review of "${review.movieTitle}"${review.reviewText ? `: ${review.reviewText.slice(0, 100)}...` : ''}`;
+    const url = window.location.origin + '/reviews';
+    
+    if (platform === 'facebook') {
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
+        '_blank',
+        'width=600,height=400'
+      );
+    } else if (platform === 'twitter') {
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+        '_blank',
+        'width=600,height=400'
+      );
     }
   };
 
@@ -404,115 +456,126 @@ export default function ReviewsPage() {
                     </p>
                   </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-500">Your Name</label>
-                      <Input
-                        placeholder="John Doe"
-                        value={formData.userName}
-                        onChange={(e) =>
-                        setFormData({ ...formData, userName: e.target.value })
-                        }
-                        required
-                        className="bg-background border-border/50 md:!text-slate-400" />
-
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-500">Movie Title</label>
-                      <Input
-                        placeholder="The Matrix"
-                        value={formData.movieTitle}
-                        onChange={(e) =>
-                        setFormData({ ...formData, movieTitle: e.target.value })
-                        }
-                        required
-                        className="bg-background border-border/50 md:!text-slate-400" />
-
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-500">
-                        Poster Path <span className="text-muted-foreground font-normal">(Optional)</span>
-                      </label>
-                      <Input
-                        placeholder="/path/to/poster.jpg"
-                        value={formData.moviePoster}
-                        onChange={(e) =>
-                        setFormData({ ...formData, moviePoster: e.target.value })
-                        }
-                        className="bg-background border-border/50 md:!text-slate-400" />
-
-                      <p className="text-xs text-muted-foreground">
-                        TMDB poster path or full URL
+                  {!session?.user ? (
+                    <div className="text-center py-8 space-y-4">
+                      <LogIn className="w-12 h-12 text-muted-foreground mx-auto opacity-50" />
+                      <p className="text-sm text-muted-foreground">
+                        Please login to submit reviews
                       </p>
+                      <Button 
+                        onClick={() => router.push(`/login?redirect=${encodeURIComponent('/reviews')}`)}
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                      >
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Login to Review
+                      </Button>
                     </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-500">
-                        Rating: {formData.rating}/10
-                      </label>
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={formData.rating}
-                        onChange={(e) =>
-                        setFormData({ ...formData, rating: e.target.value })
-                        }
-                        className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
-
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 10 }).map((_, i) =>
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                          i < parseInt(formData.rating) ?
-                          'fill-primary text-primary' :
-                          'text-muted-foreground/30'}`
-                          } />
-
-                        )}
+                  ) : (
+                    <>
+                      <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+                        <p className="text-sm text-primary">
+                          Posting as: <span className="font-semibold">{session.user.name}</span>
+                        </p>
                       </div>
-                    </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium !text-slate-500">
-                        Review <span className="text-muted-foreground font-normal">(Optional)</span>
-                      </label>
-                      <Textarea
-                        placeholder="Share your thoughts about this movie... What did you love? What could be better?"
-                        value={formData.reviewText}
-                        onChange={(e) =>
-                        setFormData({ ...formData, reviewText: e.target.value })
-                        }
-                        rows={5}
-                        className="bg-background border-border/50 resize-none" />
+                      <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium !text-slate-500">Movie Title</label>
+                          <Input
+                            placeholder="The Matrix"
+                            value={formData.movieTitle}
+                            onChange={(e) =>
+                              setFormData({ ...formData, movieTitle: e.target.value })
+                            }
+                            required
+                            className="bg-background border-border/50 md:!text-slate-400"
+                          />
+                        </div>
 
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{formData.reviewText.length} characters</span>
-                        <span>{formData.reviewText.length > 500 ? '✓ Detailed' : 'Keep writing...'}</span>
-                      </div>
-                    </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium !text-slate-500">
+                            Poster Path <span className="text-muted-foreground font-normal">(Optional)</span>
+                          </label>
+                          <Input
+                            placeholder="/path/to/poster.jpg"
+                            value={formData.moviePoster}
+                            onChange={(e) =>
+                              setFormData({ ...formData, moviePoster: e.target.value })
+                            }
+                            className="bg-background border-border/50 md:!text-slate-400"
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            TMDB poster path or full URL
+                          </p>
+                        </div>
 
-                    <Button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium !text-slate-500">
+                            Rating: {formData.rating}/10
+                          </label>
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={formData.rating}
+                            onChange={(e) =>
+                              setFormData({ ...formData, rating: e.target.value })
+                            }
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                          />
+                          <div className="flex items-center gap-1">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${
+                                  i < parseInt(formData.rating)
+                                    ? 'fill-primary text-primary'
+                                    : 'text-muted-foreground/30'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
 
-                      {submitting ?
-                      <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Submitting...
-                        </> :
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium !text-slate-500">
+                            Review <span className="text-muted-foreground font-normal">(Optional)</span>
+                          </label>
+                          <Textarea
+                            placeholder="Share your thoughts about this movie... What did you love? What could be better?"
+                            value={formData.reviewText}
+                            onChange={(e) =>
+                              setFormData({ ...formData, reviewText: e.target.value })
+                            }
+                            rows={5}
+                            className="bg-background border-border/50 resize-none"
+                          />
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>{formData.reviewText.length} characters</span>
+                            <span>{formData.reviewText.length > 500 ? '✓ Detailed' : 'Keep writing...'}</span>
+                          </div>
+                        </div>
 
-                      <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Submit Review
-                        </>
-                      }
-                    </Button>
-                  </form>
+                        <Button
+                          type="submit"
+                          disabled={submitting}
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          {submitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-2" />
+                              Submit Review
+                            </>
+                          )}
+                        </Button>
+                      </form>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -564,7 +627,6 @@ export default function ReviewsPage() {
                       src={getImageUrl(review.moviePoster)}
                       alt={review.movieTitle}
                       className="w-24 h-36 object-cover rounded-lg border border-border/50 group-hover:border-primary/30 transition-colors" />
-
                       </div>
 
                       {/* Review Content */}
@@ -597,13 +659,11 @@ export default function ReviewsPage() {
                           'fill-primary text-primary' :
                           'text-muted-foreground/30'}`
                           } />
-
                         )}
                           </div>
                           <Badge
                         variant="secondary"
                         className={`${getRatingColor(review.rating)} font-bold`}>
-
                             {review.rating}/10
                           </Badge>
                         </div>
@@ -615,16 +675,49 @@ export default function ReviewsPage() {
                           </p>
                     }
 
-                        {/* Review Meta */}
-                        <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                          <Badge variant="outline" className="text-xs">
-                            {review.reviewText ? `${review.reviewText.length} chars` : 'No text'}
-                          </Badge>
-                          {review.rating >= 8 &&
-                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
-                              Highly Recommended
+                        {/* Review Meta with Share Buttons */}
+                        <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {review.reviewText ? `${review.reviewText.length} chars` : 'No text'}
                             </Badge>
+                            {review.rating >= 8 &&
+                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
+                                Highly Recommended
+                              </Badge>
                       }
+                          </div>
+                          
+                          {/* Share Buttons */}
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-blue-500/10 hover:text-blue-500"
+                              onClick={() => handleShareReview(review, 'facebook')}
+                            >
+                              <Facebook className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-sky-500/10 hover:text-sky-500"
+                              onClick={() => handleShareReview(review, 'twitter')}
+                            >
+                              <Twitter className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 hover:bg-primary/10 hover:text-primary"
+                              onClick={() => {
+                                navigator.clipboard.writeText(window.location.origin + '/reviews');
+                                toast.success('Link copied to clipboard!');
+                              }}
+                            >
+                              <Share2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -642,6 +735,6 @@ export default function ReviewsPage() {
           </div>
         </footer>
       </div>
-    </div>);
-
+    </div>
+  );
 }
