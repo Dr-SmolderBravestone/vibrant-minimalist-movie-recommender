@@ -171,7 +171,7 @@ export default function RegisterPage() {
                     placeholder="John Doe"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
                     required
                     autoComplete="name" />
 
