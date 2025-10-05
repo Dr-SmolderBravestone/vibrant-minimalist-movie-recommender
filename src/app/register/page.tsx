@@ -190,7 +190,7 @@ export default function RegisterPage() {
                     placeholder="you@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
                     required
                     autoComplete="email" />
 
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-slate-50"
                     required
                     autoComplete="off"
                     minLength={8} />
