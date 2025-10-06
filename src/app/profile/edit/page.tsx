@@ -23,10 +23,10 @@ interface UserProfile {
 }
 
 const GENRE_OPTIONS = [
-  "Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary",
-  "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi",
-  "Thriller", "Western", "Musical", "War", "Historical", "Biography"
-];
+"Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary",
+"Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi",
+"Thriller", "Western", "Musical", "War", "Historical", "Biography"];
+
 
 export default function EditProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -54,12 +54,12 @@ export default function EditProfilePage() {
   const fetchProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem("bearer_token");
-    
+
     try {
       const res = await fetch(`/api/user-profiles?user_id=${session?.user?.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         setProfile(data);
@@ -82,11 +82,11 @@ export default function EditProfilePage() {
   };
 
   const toggleGenre = (genre: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      favoriteGenres: prev.favoriteGenres.includes(genre)
-        ? prev.favoriteGenres.filter(g => g !== genre)
-        : [...prev.favoriteGenres, genre]
+      favoriteGenres: prev.favoriteGenres.includes(genre) ?
+      prev.favoriteGenres.filter((g) => g !== genre) :
+      [...prev.favoriteGenres, genre]
     }));
   };
 
@@ -95,19 +95,19 @@ export default function EditProfilePage() {
     setSaving(true);
 
     const token = localStorage.getItem("bearer_token");
-    
+
     try {
       const payload = {
         bio: formData.bio.trim() || null,
         avatarUrl: formData.avatarUrl.trim() || null,
         location: formData.location.trim() || null,
-        favoriteGenres: formData.favoriteGenres.length > 0 
-          ? JSON.stringify(formData.favoriteGenres) 
-          : null
+        favoriteGenres: formData.favoriteGenres.length > 0 ?
+        JSON.stringify(formData.favoriteGenres) :
+        null
       };
 
       let response;
-      
+
       if (profile) {
         // Update existing profile
         response = await fetch(`/api/user-profiles?id=${profile.id}`, {
@@ -149,8 +149,8 @@ export default function EditProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background dark">
         <Loader2 className="w-12 h-12 animate-spin text-primary" />
-      </div>
-    );
+      </div>);
+
   }
 
   if (!session?.user) {
@@ -189,7 +189,7 @@ export default function EditProfilePage() {
         <section className="pt-12 pb-20 px-6">
           <div className="max-w-3xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">Edit Profile</h1>
+              <h1 className="text-3xl font-bold mb-2 !text-white">Edit Profile</h1>
               <p className="text-muted-foreground">
                 Update your profile information and preferences
               </p>
@@ -200,7 +200,7 @@ export default function EditProfilePage() {
               <div className="bg-card/50 border border-border/50 rounded-xl p-6 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <User className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold">About You</h3>
+                  <h3 className="text-lg font-semibold !text-white">About You</h3>
                 </div>
 
                 <div className="space-y-2">
@@ -210,8 +210,8 @@ export default function EditProfilePage() {
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                     rows={4}
-                    className="bg-background border-border/50"
-                  />
+                    className="bg-background border-border/50" />
+
                   <p className="text-xs text-muted-foreground">
                     {formData.bio.length} characters
                   </p>
@@ -223,8 +223,8 @@ export default function EditProfilePage() {
                     placeholder="https://example.com/avatar.jpg"
                     value={formData.avatarUrl}
                     onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
-                    className="bg-background border-border/50"
-                  />
+                    className="bg-background border-border/50" />
+
                   <p className="text-xs text-muted-foreground">
                     Paste a URL to your profile picture
                   </p>
@@ -243,8 +243,8 @@ export default function EditProfilePage() {
                     placeholder="Los Angeles, CA"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    className="bg-background border-border/50"
-                  />
+                    className="bg-background border-border/50" />
+
                   <p className="text-xs text-muted-foreground">
                     Where are you based?
                   </p>
@@ -263,16 +263,16 @@ export default function EditProfilePage() {
                 </p>
 
                 <div className="flex flex-wrap gap-2">
-                  {GENRE_OPTIONS.map((genre) => (
-                    <Badge
-                      key={genre}
-                      variant={formData.favoriteGenres.includes(genre) ? "default" : "outline"}
-                      className="cursor-pointer hover:scale-105 transition-transform"
-                      onClick={() => toggleGenre(genre)}
-                    >
+                  {GENRE_OPTIONS.map((genre) =>
+                  <Badge
+                    key={genre}
+                    variant={formData.favoriteGenres.includes(genre) ? "default" : "outline"}
+                    className="cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => toggleGenre(genre)}>
+
                       {genre}
                     </Badge>
-                  ))}
+                  )}
                 </div>
 
                 <p className="text-xs text-muted-foreground">
@@ -285,27 +285,27 @@ export default function EditProfilePage() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
-                >
-                  {saving ? (
-                    <>
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+
+                  {saving ?
+                  <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Saving...
-                    </>
-                  ) : (
-                    <>
+                    </> :
+
+                  <>
                       <Save className="w-4 h-4" />
                       Save Changes
                     </>
-                  )}
+                  }
                 </Button>
 
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => router.push("/profile")}
-                  disabled={saving}
-                >
+                  disabled={saving}>
+
                   Cancel
                 </Button>
               </div>
@@ -313,6 +313,6 @@ export default function EditProfilePage() {
           </div>
         </section>
       </div>
-    </div>
-  );
+    </div>);
+
 }
