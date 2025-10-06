@@ -271,7 +271,7 @@ export default function RecommendationsPage() {
               <Button
                 onClick={() => setShowPreferences(!showPreferences)}
                 variant="outline"
-                className="border-border/50">
+                className="border-border/50 !text-white">
 
                 <Settings className="w-4 h-4 mr-2" />
                 {showPreferences ? "Hide" : "Customize"}
@@ -395,7 +395,7 @@ export default function RecommendationsPage() {
                     onClick={() => setSelectedFilter(option.id)}
                     variant={isActive ? "default" : "outline"}
                     size="sm"
-                    className={`flex-shrink-0 gap-2 ${
+                    className={`flex-shrink-0 gap-2 !text-white ${
                     isActive ?
                     "bg-primary text-primary-foreground" :
                     "border-border/50 hover:border-primary/50"}`
