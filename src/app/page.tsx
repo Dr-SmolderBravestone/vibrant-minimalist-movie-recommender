@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Film, Sparkles, Loader2, MessageSquare, LogIn, UserCircle, LogOut } from "lucide-react";
+import { Film, Sparkles, Loader2, MessageSquare, LogIn, UserCircle, LogOut, Database } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import FilterButtons from "@/components/FilterButtons";
@@ -155,11 +155,21 @@ export default function Home() {
                   </Button>
                 </Link>
                 
+                {/* Database Viewer - Only show when logged in */}
+                {session?.user && (
+                  <Link href="/admin/database">
+                    <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                      <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="hidden lg:inline">Database</span>
+                    </Button>
+                  </Link>
+                )}
+                
                 {/* Auth Buttons */}
-                {sessionLoading ?
-                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /> :
-                session?.user ?
-                <>
+                {sessionLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                ) : session?.user ? (
+                  <>
                     <Link href="/profile">
                       <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                         <UserCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -170,9 +180,9 @@ export default function Home() {
                       <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span className="hidden sm:inline">Logout</span>
                     </Button>
-                  </> :
-
-                <>
+                  </>
+                ) : (
+                  <>
                     <Link href="/login">
                       <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                         <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -186,7 +196,7 @@ export default function Home() {
                       </Button>
                     </Link>
                   </>
-                }
+                )}
               </div>
             </div>
           </div>
