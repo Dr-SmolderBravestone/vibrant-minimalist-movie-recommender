@@ -327,7 +327,7 @@ export default function ProfilePage() {
                 {/* Stats */}
                 <div className="flex md:flex-col gap-4 md:gap-2">
                   <Button variant="outline" className="flex-1 md:flex-none" asChild>
-                    <Link href="/profile/edit">
+                    <Link href="/profile/edit" className="!text-white">
                       <Edit className="w-4 h-4 mr-2" />
                       Edit Profile
                     </Link>
@@ -428,7 +428,7 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-5 h-5 text-primary" />
-                      <h3 className="text-xl font-semibold">Recent Reviews</h3>
+                      <h3 className="text-xl font-semibold !text-white">Recent Reviews</h3>
                     </div>
                   </div>
                   
