@@ -142,9 +142,9 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/reviews">
-                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm">
+                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                     <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline !bg-transparent !text-[#d61111] !font-bold">Reviews</span>
+                    <span className="hidden sm:inline !bg-transparent !font-bold !text-white">Reviews</span>
                   </Button>
                 </Link>
                 <Link href="/recommendations">
