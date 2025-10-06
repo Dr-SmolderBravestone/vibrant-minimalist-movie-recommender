@@ -164,7 +164,7 @@ function LoginForm() {
                     placeholder="you@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-white"
                     required
                     autoComplete="email" />
 
@@ -183,7 +183,7 @@ function LoginForm() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10 bg-background border-border/50"
+                    className="pl-10 bg-background border-border/50 md:!text-white"
                     required
                     autoComplete="off" />
 
