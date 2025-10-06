@@ -142,13 +142,13 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/reviews">
-                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm text-foreground">
                     <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline !bg-transparent !font-bold !text-white">Reviews</span>
+                    <span className="hidden sm:inline">Reviews</span>
                   </Button>
                 </Link>
                 <Link href="/recommendations">
-                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm text-foreground">
                     <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     <span className="hidden md:inline">AI Recommendations</span>
                     <span className="md:hidden">AI</span>
@@ -158,7 +158,7 @@ export default function Home() {
                 {/* Database Viewer - Only show when logged in */}
                 {session?.user && (
                   <Link href="/admin/database">
-                    <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                    <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm text-foreground">
                       <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span className="hidden lg:inline">Database</span>
                     </Button>
@@ -171,9 +171,9 @@ export default function Home() {
                 ) : session?.user ? (
                   <>
                     <Link href="/profile">
-                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm">
                         <UserCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline truncate max-w-[80px] !text-white">{session.user.name}</span>
+                        <span className="hidden sm:inline truncate max-w-[80px]">{session.user.name}</span>
                       </Button>
                     </Link>
                     <Button size="sm" variant="ghost" onClick={handleSignOut} className="gap-1.5 text-xs sm:text-sm">
@@ -184,7 +184,7 @@ export default function Home() {
                 ) : (
                   <>
                     <Link href="/login">
-                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
+                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm">
                         <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span className="hidden sm:inline">Login</span>
                       </Button>

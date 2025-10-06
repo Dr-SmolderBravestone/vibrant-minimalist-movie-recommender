@@ -358,7 +358,7 @@ export default function ReviewsPage() {
             <div className="mt-6 bg-card/50 border border-border/50 rounded-xl p-4 sm:p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                  <h3 className="text-base sm:text-lg font-semibold sm:!text-gray-300">Rating Distribution</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground">Rating Distribution</h3>
                 </div>
                 <div className="space-y-2">
                   {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((rating) => {
@@ -411,7 +411,7 @@ export default function ReviewsPage() {
                   <select
                     value={filterRating || ''}
                     onChange={(e) => setFilterRating(e.target.value ? parseInt(e.target.value) : null)}
-                    className="px-2 sm:px-3 py-1.5 sm:py-2 bg-background border border-border/50 rounded-lg text-xs sm:text-sm flex-shrink-0 sm:!text-white">
+                    className="px-2 sm:px-3 py-1.5 sm:py-2 bg-background border border-border/50 rounded-lg text-xs sm:text-sm flex-shrink-0 text-foreground">
 
                     <option value="">All Ratings</option>
                     {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((r) =>
@@ -423,7 +423,7 @@ export default function ReviewsPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="px-2 sm:px-3 py-1.5 sm:py-2 bg-background border border-border/50 rounded-lg text-xs sm:text-sm flex-shrink-0 sm:!text-white">
+                    className="px-2 sm:px-3 py-1.5 sm:py-2 bg-background border border-border/50 rounded-lg text-xs sm:text-sm flex-shrink-0 text-foreground">
 
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
@@ -479,7 +479,7 @@ export default function ReviewsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                      <h2 className="text-xl sm:text-2xl font-semibold !text-slate-600">Add Review</h2>
+                      <h2 className="text-xl sm:text-2xl font-semibold text-foreground">Add Review</h2>
                     </div>
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       Share your movie experience with the community
@@ -510,7 +510,7 @@ export default function ReviewsPage() {
 
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                          <label className="text-xs sm:text-sm font-medium !text-slate-500">Movie Title</label>
+                          <label className="text-xs sm:text-sm font-medium text-foreground">Movie Title</label>
                           <Input
                           placeholder="The Matrix"
                           value={formData.movieTitle}
@@ -518,12 +518,12 @@ export default function ReviewsPage() {
                           setFormData({ ...formData, movieTitle: e.target.value })
                           }
                           required
-                          className="bg-background border-border/50 md:!text-slate-400 text-sm" />
+                          className="bg-background border-border/50 text-sm" />
 
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-xs sm:text-sm font-medium !text-slate-500">
+                          <label className="text-xs sm:text-sm font-medium text-foreground">
                             Poster Path <span className="text-muted-foreground font-normal">(Optional)</span>
                           </label>
                           <Input
@@ -532,7 +532,7 @@ export default function ReviewsPage() {
                           onChange={(e) =>
                           setFormData({ ...formData, moviePoster: e.target.value })
                           }
-                          className="bg-background border-border/50 md:!text-slate-400 text-sm" />
+                          className="bg-background border-border/50 text-sm" />
 
                           <p className="text-xs text-muted-foreground">
                             TMDB poster path or full URL
@@ -540,7 +540,7 @@ export default function ReviewsPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-xs sm:text-sm font-medium !text-slate-500">
+                          <label className="text-xs sm:text-sm font-medium text-foreground">
                             Rating: {formData.rating}/10
                           </label>
                           <input
@@ -568,7 +568,7 @@ export default function ReviewsPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-xs sm:text-sm font-medium !text-slate-500">
+                          <label className="text-xs sm:text-sm font-medium text-foreground">
                             Review <span className="text-muted-foreground font-normal">(Optional)</span>
                           </label>
                           <Textarea
