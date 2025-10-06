@@ -218,7 +218,7 @@ export default function EditProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Avatar URL (Optional)</label>
+                  <label className="text-sm font-medium !text-white">Avatar URL (Optional)</label>
                   <Input
                     placeholder="https://example.com/avatar.jpg"
                     value={formData.avatarUrl}
@@ -235,7 +235,7 @@ export default function EditProfilePage() {
               <div className="bg-card/50 border border-border/50 rounded-xl p-6 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold">Location</h3>
+                  <h3 className="text-lg font-semibold !text-white">Location</h3>
                 </div>
 
                 <div className="space-y-2">
