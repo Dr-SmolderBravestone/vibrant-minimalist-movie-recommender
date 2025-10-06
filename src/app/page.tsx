@@ -148,7 +148,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/recommendations">
-                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm">
+                  <Button size="sm" variant="ghost" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                     <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     <span className="hidden md:inline">AI Recommendations</span>
                     <span className="md:hidden">AI</span>
@@ -174,7 +174,7 @@ export default function Home() {
 
                 <>
                     <Link href="/login">
-                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm">
+                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                         <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span className="hidden sm:inline">Login</span>
                       </Button>
