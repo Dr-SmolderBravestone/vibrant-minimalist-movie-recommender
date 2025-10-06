@@ -39,7 +39,7 @@ export default function FilterButtons({
         key={genre.id}
         onClick={() => onGenreChange(genre.id.toString())}
         variant={selectedGenre === genre.id.toString() ? "default" : "outline"}
-        className={`rounded-full px-6 transition-all duration-300 !flex ${
+        className={`rounded-full px-6 transition-all duration-300 !flex !text-white ${
         selectedGenre === genre.id.toString() ?
         "bg-primary text-primary-foreground shadow-lg shadow-primary/25" :
         "bg-card border-border/50 hover:border-primary/50 hover:bg-primary/5"}`
