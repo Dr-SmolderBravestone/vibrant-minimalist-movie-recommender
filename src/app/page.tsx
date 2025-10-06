@@ -161,9 +161,9 @@ export default function Home() {
                 session?.user ?
                 <>
                     <Link href="/profile">
-                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm">
+                      <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm sm:!text-white">
                         <UserCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline truncate max-w-[80px]">{session.user.name}</span>
+                        <span className="hidden sm:inline truncate max-w-[80px] !text-white">{session.user.name}</span>
                       </Button>
                     </Link>
                     <Button size="sm" variant="ghost" onClick={handleSignOut} className="gap-1.5 text-xs sm:text-sm">
