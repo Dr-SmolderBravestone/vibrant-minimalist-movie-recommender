@@ -14,7 +14,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isPending } = useSession();
-  
+
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -89,8 +89,8 @@ function LoginForm() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background dark">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+      </div>);
+
   }
 
   if (session?.user) {
@@ -126,18 +126,18 @@ function LoginForm() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5"
+              className="w-full h-12 border-border/50 hover:border-primary/50 hover:bg-primary/5 !text-white"
               onClick={handleGoogleSignIn}
-              disabled={googleLoading}
-            >
-              {googleLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
+              disabled={googleLoading}>
+
+              {googleLoading ?
+              <Loader2 className="w-5 h-5 animate-spin" /> :
+
+              <>
                   <Chrome className="w-5 h-5 mr-2" />
                   Continue with Google
                 </>
-              )}
+              }
             </Button>
 
             {/* Divider */}
@@ -166,8 +166,8 @@ function LoginForm() {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="pl-10 bg-background border-border/50"
                     required
-                    autoComplete="email"
-                  />
+                    autoComplete="email" />
+
                 </div>
               </div>
 
@@ -185,8 +185,8 @@ function LoginForm() {
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="pl-10 bg-background border-border/50"
                     required
-                    autoComplete="off"
-                  />
+                    autoComplete="off" />
+
                 </div>
               </div>
 
@@ -195,14 +195,14 @@ function LoginForm() {
                   <Checkbox
                     id="remember"
                     checked={formData.rememberMe}
-                    onCheckedChange={(checked) => 
-                      setFormData({ ...formData, rememberMe: checked as boolean })
-                    }
-                  />
-                  <label 
-                    htmlFor="remember" 
-                    className="text-sm text-muted-foreground cursor-pointer"
-                  >
+                    onCheckedChange={(checked) =>
+                    setFormData({ ...formData, rememberMe: checked as boolean })
+                    } />
+
+                  <label
+                    htmlFor="remember"
+                    className="text-sm text-muted-foreground cursor-pointer">
+
                     Remember me
                   </label>
                 </div>
@@ -211,16 +211,16 @@ function LoginForm() {
               <Button
                 type="submit"
                 className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
+                disabled={loading}>
+
+                {loading ?
+                <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Signing in...
-                  </>
-                ) : (
-                  "Sign In"
-                )}
+                  </> :
+
+                "Sign In"
+                }
               </Button>
             </form>
 
@@ -228,10 +228,10 @@ function LoginForm() {
             <div className="text-center pt-4 border-t border-border/50">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link 
+                <Link
                   href={`/register${redirect !== "/" ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
-                  className="text-primary hover:underline font-medium"
-                >
+                  className="text-primary hover:underline font-medium">
+
                   Create account
                 </Link>
               </p>
@@ -246,20 +246,20 @@ function LoginForm() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background dark">
+      <div className="min-h-screen flex items-center justify-center bg-background dark">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
-      }
-    >
+      }>
+
       <LoginForm />
-    </Suspense>
-  );
+    </Suspense>);
+
 }
