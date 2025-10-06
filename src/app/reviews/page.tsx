@@ -358,7 +358,7 @@ export default function ReviewsPage() {
             <div className="mt-6 bg-card/50 border border-border/50 rounded-xl p-4 sm:p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                  <h3 className="text-base sm:text-lg font-semibold">Rating Distribution</h3>
+                  <h3 className="text-base sm:text-lg font-semibold sm:!text-gray-300">Rating Distribution</h3>
                 </div>
                 <div className="space-y-2">
                   {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((rating) => {
