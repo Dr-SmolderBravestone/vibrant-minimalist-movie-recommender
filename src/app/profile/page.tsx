@@ -252,13 +252,13 @@ export default function ProfilePage() {
               
               <div className="flex items-center gap-3">
                 <Link href="/">
-                  <Button variant="ghost" className="gap-2">
+                  <Button variant="ghost" className="gap-2 !text-white">
                     <Film className="w-4 h-4" />
                     Browse
                   </Button>
                 </Link>
                 <Link href="/reviews">
-                  <Button variant="ghost" className="gap-2">
+                  <Button variant="ghost" className="gap-2 !text-white">
                     <MessageSquare className="w-4 h-4" />
                     Reviews
                   </Button>
